@@ -1,6 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_sample/screens/forgot1.dart';
 import 'package:firebase_sample/screens/page1.dart';
 import 'package:firebase_sample/screens/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,116 +15,178 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  
-  var email = TextEditingController();
-  var password = TextEditingController();
+  var email2 = TextEditingController();
+  var password2 = TextEditingController();
+
+  final formkey = GlobalKey<FormState>();
+
+  Future<void> _savedatatosharedpreferences(String data) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString('Details', data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 222, 179, 220),
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 238, 181, 235),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 120.0, right: 50),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 60.0),
-                child: Text(
-                  'Create Account',
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 78, 52, 42),
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500),
+        body: Form(
+      key: formkey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Create Account',
+            style: TextStyle(
+                color: Color.fromARGB(255, 21, 95, 155),
+                fontSize: 30,
+                fontWeight: FontWeight.w500),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Container(
+              height: 60,
+              width: 300,
+              decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(5)),
+              child: TextFormField(
+                controller: email2,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+                style: TextStyle(
+                  color: Colors.black,
                 ),
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(borderSide: BorderSide.none),
+                    hintText: '      EMAIL',
+                    hintStyle: TextStyle(color: Colors.black)),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 60, top: 30),
-                child: Container(
-                  height: 50,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 149, 76, 154),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: TextFormField(
-                    controller: email ,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: '      EMAIL',
-                        hintStyle: TextStyle(color: Colors.white)),
-                  ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Container(
+              width: 300,
+              decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(5)),
+              child: TextFormField(
+                controller: password2,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+                style: TextStyle(
+                  color: Colors.black,
                 ),
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(borderSide: BorderSide.none),
+                    hintText: '      PASSWORD',
+                    hintStyle: TextStyle(color: Colors.black)),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 60, top: 30),
-                child: Container(
-                  height: 50,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 153, 81, 145),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: TextFormField(
-                    controller: password,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: '      PASSWORD',
-                        hintStyle: TextStyle(color: Colors.white)),
-                  ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 150),
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Password1(),
+                    ));
+              },
+              child: Text(
+                'Forgot Password?',
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+          ),
+          Padding(
+             padding: const EdgeInsets.only(left: 150),
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Signin(),
+                    ));
+              },
+              child: Text(
+                'Forgot Password 2?',
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 20,
+            ),
+            child: ElevatedButton(
+              onPressed: () async {
+                if (formkey.currentState!.validate()) {
+                  String email = email2.text.trim();
+                  String password = password2.text.trim();
+                  var querysnapshot = await FirebaseFirestore.instance
+                      .collection('Register')
+                      .where('Email', isEqualTo: email)
+                      .limit(1)
+                      .get();
+
+                  if (querysnapshot.docs.isNotEmpty) {
+                    var userData = querysnapshot.docs.first.data();
+                    if (userData['Password'] == password) {
+                      await _savedatatosharedpreferences(userData['data']);
+                    }
+                  }
+                }
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => page1(),
+                    ));
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.blue[100]),
+              ),
+              child: Text(
+                'LOGIN',
+                style: TextStyle(color: Colors.black, fontSize: 17),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Dont you have a account?',
+                  style: TextStyle(fontSize: 15),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Dont you have a account?',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Signin(),
-                            ));
-                      },
-                      child: Text(
-                        'Signin',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40, left: 50),
-                child: ElevatedButton(
+                TextButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => page1(),
+                          builder: (context) => Signin(),
                         ));
                   },
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(
-                          Color.fromARGB(255, 143, 74, 156))),
                   child: Text(
-                    'LOGIN',
-                    style: TextStyle(color: Colors.white),
+                    'Signup',
+                    style: TextStyle(fontSize: 15),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
-        ));
+        ],
+      ),
+    ));
   }
 }

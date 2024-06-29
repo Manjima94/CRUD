@@ -14,6 +14,7 @@ class _page1State extends State<page1> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var name = TextEditingController();
   var content = TextEditingController();
+  
   TextEditingController taskcontroller = TextEditingController();
   late String taskIdForupdate;
   // Future<void> edit() async {
@@ -37,65 +38,68 @@ class _page1State extends State<page1> {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var todo = snapshot.data!.docs[index];
-              return ListTile(
-                title: Text(todo['task']),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        taskIdForupdate = todo.id;
-                        taskcontroller.text = todo['task'];
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Edit Task'),
-                              content: TextField(
-                                controller: taskcontroller,
-                                decoration: InputDecoration(
-                                  hintText: 'Enter your task',
+              return Card(
+                color: Colors.blue[100],
+                child: ListTile(
+                  title: Text(todo['task']),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          taskIdForupdate = todo.id;
+                          taskcontroller.text = todo['task'];
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Edit Task'),
+                                content: TextField(
+                                  controller: taskcontroller,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter your task',
+                                  ),
                                 ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    if (taskcontroller.text.isNotEmpty) {
-                                      FirebaseFirestore.instance
-                                          .collection('todos')
-                                          .doc(taskIdForupdate)
-                                          .update({
-                                        'task': taskcontroller.text,
-                                      });
-                                      name.clear();
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
                                       Navigator.of(context).pop();
-                                    }
-                                  },
-                                  child: Text('Update'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        FirebaseFirestore.instance
-                            .collection('todos')
-                            .doc(todo.id)
-                            .delete();
-                      },
-                    ),
-                  ],
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      if (taskcontroller.text.isNotEmpty) {
+                                        FirebaseFirestore.instance
+                                            .collection('todos')
+                                            .doc(taskIdForupdate)
+                                            .update({
+                                          'task': taskcontroller.text,
+                                        });
+                                        name.clear();
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                                    child: Text('Update'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection('todos')
+                              .doc(todo.id)
+                              .delete();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -105,6 +109,8 @@ class _page1State extends State<page1> {
       Align(
         alignment: Alignment.bottomCenter,
         child: FloatingActionButton(
+          backgroundColor: Colors.blue[200],
+          shape: CircleBorder(),
           onPressed: () {
             showDialog(
               context: context,
@@ -139,7 +145,7 @@ class _page1State extends State<page1> {
               },
             );
           },
-          child: Icon(Icons.add),
+          child: Icon(Icons.add,size: 30),
         ),
       )
     ]));
