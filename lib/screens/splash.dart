@@ -37,8 +37,7 @@ class _splashState extends State<splash> {
                 fontSize: 50,
                 fontFamily: 'Rosarivo',
                 fontWeight: FontWeight.w900),
-                    ),AnimatedIcon(icon: AnimatedIcons.event_add, progress:kAlwaysCompleteAnimation ),
-                    Icon(Icons.check_box,color: Colors.cyan[800],size: 60,)
+                    ),
             ],
           )),
     );
