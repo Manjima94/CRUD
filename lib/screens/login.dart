@@ -3,8 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_sample/screens/forgot1.dart';
 import 'package:firebase_sample/screens/page1.dart';
-import 'package:firebase_sample/screens/signin.dart';
+import 'package:firebase_sample/screens/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -28,165 +29,185 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 206, 229, 231),
+            automaticallyImplyLeading: false),
         body: Form(
-      key: formkey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Create Account',
-            style: TextStyle(
-                color: Color.fromARGB(255, 21, 95, 155),
-                fontSize: 30,
-                fontWeight: FontWeight.w500),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 30),
-            child: Container(
-              height: 60,
-              width: 300,
-              decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(5)),
-              child: TextFormField(
-                controller: email2,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: '      EMAIL',
-                    hintStyle: TextStyle(color: Colors.black)),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 30),
-            child: Container(
-              width: 300,
-              decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(5)),
-              child: TextFormField(
-                controller: password2,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: '      PASSWORD',
-                    hintStyle: TextStyle(color: Colors.black)),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 150),
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Password1(),
-                    ));
-              },
-              child: Text(
-                'Forgot Password?',
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-          ),
-          Padding(
-             padding: const EdgeInsets.only(left: 150),
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Signin(),
-                    ));
-              },
-              child: Text(
-                'Forgot Password 2?',
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 20,
-            ),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (formkey.currentState!.validate()) {
-                  String email = email2.text.trim();
-                  String password = password2.text.trim();
-                  var querysnapshot = await FirebaseFirestore.instance
-                      .collection('Register')
-                      .where('Email', isEqualTo: email)
-                      .limit(1)
-                      .get();
-
-                  if (querysnapshot.docs.isNotEmpty) {
-                    var userData = querysnapshot.docs.first.data();
-                    if (userData['Password'] == password) {
-                      await _savedatatosharedpreferences(userData['data']);
-                    }
-                  }
-                }
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => page1(),
-                    ));
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.blue[100]),
-              ),
-              child: Text(
-                'LOGIN',
-                style: TextStyle(color: Colors.black, fontSize: 17),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Row(
+          key: formkey,
+          child: SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Dont you have a account?',
-                  style: TextStyle(fontSize: 15),
+                  'Welcome Back !',
+                  style: TextStyle(
+                      color: Colors.cyan[800],
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Signin(),
-                        ));
-                  },
-                  child: Text(
-                    'Signup',
-                    style: TextStyle(fontSize: 15),
+                Image(
+                  image: AssetImage('images/login.png'),
+                  height: ScreenUtil().setHeight(200),
+                  width: ScreenUtil().setWidth(200),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: SizedBox(
+                    height: ScreenUtil().setHeight(40),
+                    width: ScreenUtil().setWidth(270),
+                    child: TextFormField(
+                      controller: email2,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                          fillColor: Colors.cyan[800],
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(15)),
+                          hintText: '      EMAIL',
+                          hintStyle:
+                              TextStyle(color: Colors.white, fontSize: 17)),
+                    ),
                   ),
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: SizedBox(
+                    height: ScreenUtil().setHeight(40),
+                    width: ScreenUtil().setWidth(270),
+                    child: TextFormField(
+                      controller: password2,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                          fillColor: Colors.cyan[800],
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(15)),
+                          hintText: '      PASSWORD',
+                          hintStyle:
+                              TextStyle(color: Colors.white, fontSize: 17)),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 150),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Signup(),
+                          ));
+                    },
+                    child: Text(
+                      'Forgot Password ?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.cyan[800],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (formkey.currentState!.validate()) {
+                        String email = email2.text.trim();
+                        String password = password2.text.trim();
+                        var querysnapshot = await FirebaseFirestore.instance
+                            .collection('Register')
+                            .where('Email', isEqualTo: email)
+                            .limit(1)
+                            .get();
+
+                        if (querysnapshot.docs.isNotEmpty) {
+                          var userData = querysnapshot.docs.first.data();
+                          if (userData['Password'] == password) {
+                            await _savedatatosharedpreferences(
+                                userData['data']);
+                          }
+                        }
+                      }
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => page1(),
+                          ));
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15))),
+                      fixedSize: MaterialStatePropertyAll(Size(
+                        ScreenUtil().setWidth(200),
+                        ScreenUtil().setHeight(40),
+                      )),
+                      backgroundColor: MaterialStatePropertyAll(
+                        Colors.cyan[800],
+                      ),
+                    ),
+                    child: Text(
+                      'LOGIN',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Dont you have a account?',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.cyan[800],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Signup(),
+                              ));
+                        },
+                        child: Text(
+                          'Signup',
+                          style: TextStyle(
+                            fontSize: 19,
+                            color: Colors.cyan[800],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
-    ));
+        ));
   }
 }
